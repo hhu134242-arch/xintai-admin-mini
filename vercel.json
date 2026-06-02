@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npx uni build",
+  "outputDirectory": "dist/build/h5",
+  "installCommand": "npm install --legacy-peer-deps --no-fund --no-audit"
+}

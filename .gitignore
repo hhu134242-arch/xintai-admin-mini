@@ -5,3 +5,4 @@ unpackage/
 *.log
 .env
 .env.local
+.vercel

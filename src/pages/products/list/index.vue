@@ -2,25 +2,31 @@
   <view class="page">
     <!-- 搜索栏 -->
     <view class="search-bar">
-      <input
-        v-model="searchText"
-        class="search-input"
-        placeholder="搜索产品名称..."
-        confirm-type="search"
-        @confirm="onSearch"
-      />
+      <view class="search-wrap">
+        <text class="search-icon">🔍</text>
+        <input
+          v-model="searchText"
+          class="search-input"
+          placeholder="搜索产品名称..."
+          placeholder-class="search-placeholder"
+          confirm-type="search"
+          @confirm="onSearch"
+        />
+      </view>
     </view>
 
     <!-- 分类 Tab -->
     <scroll-view scroll-x class="category-tabs">
-      <view
-        v-for="cat in categories"
-        :key="cat.value"
-        class="tab-item"
-        :class="{ active: currentCategory === cat.value }"
-        @tap="switchCategory(cat.value)"
-      >
-        {{ cat.label }}
+      <view class="category-inner">
+        <view
+          v-for="cat in categories"
+          :key="cat.value"
+          class="tab-item"
+          :class="{ active: currentCategory === cat.value }"
+          @tap="switchCategory(cat.value)"
+        >
+          {{ cat.label }}
+        </view>
       </view>
     </scroll-view>
 
@@ -39,33 +45,46 @@
         class="product-card"
         @tap="goDetail(product)"
       >
-        <image
-          class="product-img"
-          :src="product.images?.[0] || ''"
-          mode="aspectFill"
-        />
-        <view class="product-info">
-          <text class="product-name">{{ product.name_en }}</text>
-          <text class="product-name-cn">{{ product.name_cn }}</text>
-          <view class="product-meta">
-            <text class="price">US${{ product.price?.toFixed(2) }}</text>
-            <text class="moq">MOQ {{ product.moq }}</text>
-            <text class="category-tag">{{ product.category }}</text>
+        <view class="card-body">
+          <image
+            class="product-img"
+            :src="product.images?.[0] || ''"
+            mode="aspectFill"
+          />
+          <view class="product-info">
+            <text class="product-name">{{ product.name_en }}</text>
+            <text class="product-name-cn">{{ product.name_cn }}</text>
+            <view class="product-meta">
+              <text class="price">US${{ product.price?.toFixed(2) }}</text>
+              <text class="moq">MOQ {{ product.moq }}</text>
+            </view>
+            <view class="product-tag-row">
+              <text class="category-tag">{{ product.category }}</text>
+            </view>
           </view>
         </view>
-        <view class="product-actions">
+        <view class="card-footer">
+          <view class="footer-spacer"></view>
           <view class="action-btn edit" @tap.stop="goEdit(product)">编辑</view>
           <view class="action-btn delete" @tap.stop="onDelete(product)">删除</view>
         </view>
       </view>
 
       <view v-if="loading && page > 1" class="loading-more">加载中...</view>
-      <view v-if="!loading && products.length === 0" class="empty">暂无产品</view>
+
+      <!-- 空状态 -->
+      <view v-if="!loading && products.length === 0" class="empty-state">
+        <text class="empty-icon">📦</text>
+        <text class="empty-text">暂无产品</text>
+      </view>
+
       <view v-if="!loading && noMore && products.length > 0" class="no-more">没有更多了</view>
     </scroll-view>
 
-    <!-- 添加按钮 -->
-    <view class="fab" @tap="goAdd">+</view>
+    <!-- FAB 添加按钮 -->
+    <view class="fab" @tap="goAdd">
+      <text class="fab-icon">+</text>
+    </view>
   </view>
 </template>
 
@@ -177,26 +196,234 @@ onMounted(() => loadProducts(true))
 </script>
 
 <style scoped>
-.page { min-height: 100vh; background: #f5f5f5; }
-.search-bar { padding: 16rpx 24rpx; background: #fff; }
-.search-input { height: 72rpx; background: #f5f5f5; border-radius: 8rpx; padding: 0 24rpx; font-size: 28rpx; }
-.category-tabs { white-space: nowrap; background: #fff; padding: 16rpx 24rpx; border-bottom: 1rpx solid #e8e8e8; }
-.tab-item { display: inline-block; padding: 12rpx 28rpx; margin-right: 16rpx; font-size: 26rpx; color: #666; border-radius: 30rpx; background: #f5f5f5; }
-.tab-item.active { background: #1a1a1a; color: #fff; }
-.product-list { height: calc(100vh - 280rpx); padding: 16rpx 24rpx; }
-.product-card { display: flex; background: #fff; border-radius: 12rpx; margin-bottom: 16rpx; padding: 20rpx; align-items: center; }
-.product-img { width: 120rpx; height: 120rpx; border-radius: 8rpx; margin-right: 20rpx; flex-shrink: 0; background: #f0f0f0; }
-.product-info { flex: 1; overflow: hidden; }
-.product-name { display: block; font-size: 28rpx; font-weight: 500; color: #1a1a1a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.product-name-cn { display: block; font-size: 22rpx; color: #999; margin-top: 4rpx; }
-.product-meta { display: flex; align-items: center; gap: 16rpx; margin-top: 12rpx; }
-.price { font-size: 26rpx; font-weight: 500; color: #1a1a1a; }
-.moq { font-size: 22rpx; color: #999; }
-.category-tag { font-size: 20rpx; color: #b8860b; background: #fdf6e3; padding: 4rpx 12rpx; border-radius: 4rpx; }
-.product-actions { display: flex; flex-direction: column; gap: 8rpx; margin-left: 16rpx; }
-.action-btn { font-size: 22rpx; padding: 8rpx 16rpx; border-radius: 6rpx; text-align: center; }
-.action-btn.edit { background: #f0f0f0; color: #333; }
-.action-btn.delete { background: #fff0f0; color: #e74c3c; }
-.loading-more, .empty, .no-more { text-align: center; padding: 30rpx; font-size: 24rpx; color: #999; }
-.fab { position: fixed; right: 40rpx; bottom: 200rpx; width: 100rpx; height: 100rpx; background: #b8860b; color: #fff; font-size: 48rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.2); }
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+/* 搜索栏 */
+.search-bar {
+  padding: 20rpx 24rpx;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.search-wrap {
+  display: flex;
+  align-items: center;
+  height: 72rpx;
+  background: #f5f5f5;
+  border-radius: 999rpx;
+  padding: 0 24rpx;
+}
+
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  height: 72rpx;
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.search-placeholder {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 28rpx;
+}
+
+/* 分类 Tab */
+.category-tabs {
+  background: #fff;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  white-space: nowrap;
+}
+
+.category-inner {
+  display: flex;
+  padding: 0 24rpx;
+  gap: 16rpx;
+}
+
+.tab-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12rpx 28rpx;
+  font-size: 26rpx;
+  color: rgba(0, 0, 0, 0.65);
+  background: #f5f5f5;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.tab-item.active {
+  background: #1677ff;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* 产品列表 */
+.product-list {
+  height: calc(100vh - 320rpx);
+  padding: 20rpx 24rpx;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+  padding: 24rpx;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.card-body {
+  display: flex;
+  align-items: flex-start;
+}
+
+.product-img {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  background: #f0f0f0;
+}
+
+.product-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.product-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.88);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-name-cn {
+  display: block;
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.45);
+  margin-top: 4rpx;
+}
+
+.product-meta {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-top: 12rpx;
+}
+
+.price {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.moq {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.product-tag-row {
+  margin-top: 10rpx;
+}
+
+.category-tag {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #1677ff;
+  background: rgba(22, 119, 255, 0.08);
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+}
+
+/* 卡片底部操作栏 */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 20rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.footer-spacer {
+  flex: 1;
+}
+
+.action-btn {
+  font-size: 24rpx;
+  padding: 8rpx 20rpx;
+  margin-left: 20rpx;
+}
+
+.action-btn.edit {
+  color: #1677ff;
+}
+
+.action-btn.delete {
+  color: #ff4d4f;
+}
+
+/* 加载状态 */
+.loading-more,
+.no-more {
+  text-align: center;
+  padding: 30rpx;
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* FAB 按钮 */
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 200rpx;
+  width: 100rpx;
+  height: 100rpx;
+  background: #1677ff;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 20rpx rgba(22, 119, 255, 0.4);
+}
+
+.fab-icon {
+  font-size: 48rpx;
+  color: #fff;
+  line-height: 1;
+}
 </style>

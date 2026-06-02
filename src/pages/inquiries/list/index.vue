@@ -1,20 +1,22 @@
 <template>
   <view class="page">
-    <!-- 状态 Tab -->
-    <view class="status-tabs">
-      <view
-        v-for="tab in statusTabs"
-        :key="tab.value"
-        class="tab-item"
-        :class="{ active: currentStatus === tab.value }"
-        @tap="switchStatus(tab.value)"
-      >
-        {{ tab.label }}
-        <view v-if="tab.value === 'pending' && pendingCount > 0" class="badge">{{ pendingCount }}</view>
+    <!-- Status Tabs -->
+    <view class="tabs-wrapper">
+      <view class="tabs-inner">
+        <view
+          v-for="tab in statusTabs"
+          :key="tab.value"
+          class="tab-pill"
+          :class="{ active: currentStatus === tab.value }"
+          @tap="switchStatus(tab.value)"
+        >
+          <text class="tab-label">{{ tab.label }}</text>
+          <view v-if="tab.value === 'new' && pendingCount > 0" class="tab-badge">{{ pendingCount }}</view>
+        </view>
       </view>
     </view>
 
-    <!-- 询盘列表 -->
+    <!-- Inquiry List -->
     <scroll-view
       scroll-y
       class="inquiry-list"
@@ -23,45 +25,66 @@
       @refresherrefresh="onRefresh"
       @scrolltolower="onLoadMore"
     >
+      <!-- Inquiry Card -->
       <view
         v-for="item in inquiries"
         :key="item.id"
         class="inquiry-card"
         @tap="goDetail(item)"
       >
+        <!-- Card Header -->
         <view class="card-header">
-          <view class="avatar">{{ item.name?.charAt(0) || '?' }}</view>
+          <view class="avatar-circle">
+            <text class="avatar-letter">{{ item.name?.charAt(0) || '?' }}</text>
+          </view>
           <view class="header-info">
-            <text class="name">{{ item.name }}</text>
-            <text class="company">{{ item.company || '—' }}</text>
+            <view class="name-row">
+              <text class="customer-name">{{ item.name }}</text>
+              <view v-if="item.status === 'new'" class="unread-dot" />
+            </view>
+            <text class="company-name">{{ item.company || '—' }}</text>
           </view>
-          <view class="header-right">
-            <view v-if="item.status === 'new'" class="unread-dot" />
-            <text class="time">{{ formatTime(item.created_at) }}</text>
-          </view>
+          <text class="time-text">{{ formatTime(item.created_at) }}</text>
         </view>
+
+        <!-- Card Body -->
         <view class="card-body">
-          <view v-if="item.items?.length" class="items-row">
+          <view v-if="item.items?.length" class="product-thumbs">
             <image
               v-for="(it, i) in item.items.slice(0, 3)"
               :key="i"
               :src="it.product_image"
-              class="item-thumb"
+              class="thumb-img"
               mode="aspectFill"
             />
-            <text v-if="item.items.length > 3" class="more-count">+{{ item.items.length - 3 }}</text>
+            <view v-if="item.items.length > 3" class="thumb-more">
+              <text class="thumb-more-text">+{{ item.items.length - 3 }}</text>
+            </view>
           </view>
           <text class="message-preview">{{ item.message || '无消息内容' }}</text>
         </view>
+
+        <!-- Card Footer -->
         <view class="card-footer">
-          <text class="quantity">数量: {{ item.quantity || '—' }}</text>
-          <text class="status-tag" :class="item.status">{{ statusLabel(item.status) }}</text>
+          <text class="qty-text">数量: {{ item.quantity || '—' }}</text>
+          <view class="status-tag" :class="item.status">
+            <text class="status-tag-text">{{ statusLabel(item.status) }}</text>
+          </view>
         </view>
       </view>
 
-      <view v-if="loading && page > 1" class="loading-more">加载中...</view>
-      <view v-if="!loading && inquiries.length === 0" class="empty">暂无询盘</view>
-      <view v-if="!loading && noMore && inquiries.length > 0" class="no-more">没有更多了</view>
+      <!-- States -->
+      <view v-if="loading && page > 1" class="state-text">
+        <view class="state-spinner" />
+        <text class="state-label">加载中...</text>
+      </view>
+      <view v-if="!loading && inquiries.length === 0" class="empty-state">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无询盘</text>
+      </view>
+      <view v-if="!loading && noMore && inquiries.length > 0" class="state-text">
+        <text class="state-label">没有更多了</text>
+      </view>
     </scroll-view>
   </view>
 </template>
@@ -160,32 +183,248 @@ onMounted(() => loadInquiries(true))
 </script>
 
 <style scoped>
-.page { min-height: 100vh; background: #f5f5f5; }
-.status-tabs { display: flex; background: #fff; padding: 16rpx 24rpx; gap: 12rpx; border-bottom: 1rpx solid #e8e8e8; }
-.tab-item { position: relative; padding: 12rpx 24rpx; font-size: 26rpx; color: #666; border-radius: 30rpx; background: #f5f5f5; }
-.tab-item.active { background: #1a1a1a; color: #fff; }
-.badge { position: absolute; top: -4rpx; right: -4rpx; min-width: 32rpx; height: 32rpx; background: #e74c3c; color: #fff; font-size: 20rpx; border-radius: 16rpx; display: flex; align-items: center; justify-content: center; padding: 0 8rpx; }
-.inquiry-list { height: calc(100vh - 120rpx); padding: 16rpx 24rpx; }
-.inquiry-card { background: #fff; border-radius: 12rpx; margin-bottom: 16rpx; padding: 24rpx; }
-.card-header { display: flex; align-items: center; }
-.avatar { width: 72rpx; height: 72rpx; background: #1a1a1a; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28rpx; font-weight: 600; margin-right: 16rpx; flex-shrink: 0; }
-.header-info { flex: 1; overflow: hidden; }
-.name { display: block; font-size: 28rpx; font-weight: 500; color: #1a1a1a; }
-.company { display: block; font-size: 22rpx; color: #999; margin-top: 2rpx; }
-.header-right { text-align: right; flex-shrink: 0; }
-.unread-dot { width: 16rpx; height: 16rpx; background: #e74c3c; border-radius: 50%; margin-left: auto; margin-bottom: 8rpx; }
-.time { font-size: 22rpx; color: #999; }
-.card-body { margin-top: 16rpx; }
-.items-row { display: flex; gap: 8rpx; margin-bottom: 12rpx; }
-.item-thumb { width: 80rpx; height: 80rpx; border-radius: 6rpx; background: #f0f0f0; }
-.more-count { font-size: 22rpx; color: #999; display: flex; align-items: center; }
-.message-preview { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 26rpx; color: #666; line-height: 1.5; }
-.card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16rpx; padding-top: 12rpx; border-top: 1rpx solid #f5f5f5; }
-.quantity { font-size: 22rpx; color: #999; }
-.status-tag { font-size: 22rpx; padding: 4rpx 16rpx; border-radius: 4rpx; }
-.status-tag.new { background: #fff3e0; color: #f57c00; }
-.status-tag.read { background: #e3f2fd; color: #1976d2; }
-.status-tag.replied { background: #e8f5e9; color: #43a047; }
-.status-tag.archived { background: #f5f5f5; color: #999; }
-.loading-more, .empty, .no-more { text-align: center; padding: 30rpx; font-size: 24rpx; color: #999; }
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+/* Tabs */
+.tabs-wrapper {
+  background: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.tabs-inner {
+  display: flex;
+  gap: 12rpx;
+  padding: 20rpx 24rpx;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.tab-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 28rpx;
+  background: #f5f5f5;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+}
+.tab-pill.active {
+  background: #1677ff;
+}
+.tab-label {
+  font-size: 26rpx;
+  color: rgba(0,0,0,0.65);
+}
+.tab-pill.active .tab-label {
+  color: #fff;
+  font-weight: 500;
+}
+.tab-badge {
+  position: absolute;
+  top: -6rpx;
+  right: -6rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  background: #ff4d4f;
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: 999rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8rpx;
+  line-height: 32rpx;
+}
+
+/* Inquiry List */
+.inquiry-list {
+  height: calc(100vh - 96rpx);
+  padding: 24rpx;
+}
+
+/* Inquiry Card */
+.inquiry-card {
+  background: #fff;
+  border-radius: 12rpx;
+  margin-bottom: 24rpx;
+  padding: 28rpx;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+}
+.avatar-circle {
+  width: 72rpx;
+  height: 72rpx;
+  background: #1677ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 20rpx;
+}
+.avatar-letter {
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.header-info {
+  flex: 1;
+  overflow: hidden;
+}
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+.customer-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: rgba(0,0,0,0.88);
+}
+.unread-dot {
+  width: 14rpx;
+  height: 14rpx;
+  background: #ff4d4f;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.company-name {
+  display: block;
+  font-size: 22rpx;
+  color: rgba(0,0,0,0.45);
+  margin-top: 4rpx;
+}
+.time-text {
+  font-size: 22rpx;
+  color: rgba(0,0,0,0.45);
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+/* Card Body */
+.card-body {
+  margin-top: 20rpx;
+}
+.product-thumbs {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+.thumb-img {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 8rpx;
+  background: #f5f5f5;
+}
+.thumb-more {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 8rpx;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.thumb-more-text {
+  font-size: 22rpx;
+  color: rgba(0,0,0,0.45);
+}
+.message-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 26rpx;
+  color: rgba(0,0,0,0.65);
+  line-height: 1.6;
+}
+
+/* Card Footer */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+.qty-text {
+  font-size: 22rpx;
+  color: rgba(0,0,0,0.45);
+}
+.status-tag {
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+}
+.status-tag.new {
+  background: rgba(250,173,20,0.1);
+}
+.status-tag.new .status-tag-text {
+  color: #faad14;
+}
+.status-tag.read {
+  background: rgba(22,119,255,0.1);
+}
+.status-tag.read .status-tag-text {
+  color: #1677ff;
+}
+.status-tag.replied {
+  background: rgba(82,196,26,0.1);
+}
+.status-tag.replied .status-tag-text {
+  color: #52c41a;
+}
+.status-tag.archived {
+  background: #f5f5f5;
+}
+.status-tag.archived .status-tag-text {
+  color: rgba(0,0,0,0.45);
+}
+.status-tag-text {
+  font-size: 22rpx;
+}
+
+/* Empty & States */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+}
+.empty-icon {
+  font-size: 64rpx;
+  margin-bottom: 16rpx;
+}
+.empty-text {
+  font-size: 28rpx;
+  color: rgba(0,0,0,0.45);
+}
+.state-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx;
+  gap: 12rpx;
+}
+.state-label {
+  font-size: 24rpx;
+  color: rgba(0,0,0,0.45);
+}
+.state-spinner {
+  width: 32rpx;
+  height: 32rpx;
+  border: 3rpx solid #d9d9d9;
+  border-top-color: #1677ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>

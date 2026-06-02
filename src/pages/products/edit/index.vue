@@ -2,103 +2,208 @@
   <view class="page">
     <view class="form">
       <!-- 基本信息 -->
-      <view class="section-title">基本信息</view>
-      <view class="field">
-        <text class="label">产品名称 (EN) *</text>
-        <input v-model="form.name_en" placeholder="e.g. Floral Summer Dress" />
-      </view>
-      <view class="field">
-        <text class="label">产品名称 (CN)</text>
-        <input v-model="form.name_cn" placeholder="e.g. 碎花夏裙" />
-      </view>
-      <view class="field">
-        <text class="label">URL Slug</text>
-        <input v-model="form.slug" placeholder="自动生成（留空）" />
-      </view>
-      <view class="field">
-        <text class="label">描述 (EN)</text>
-        <textarea v-model="form.description" placeholder="Product description" :maxlength="2000" />
-      </view>
-      <view class="field">
-        <text class="label">描述 (CN)</text>
-        <textarea v-model="form.description_cn" placeholder="产品中文描述" :maxlength="2000" />
+      <view class="card">
+        <view class="section-title">
+          <view class="title-bar"></view>
+          <text>基本信息</text>
+        </view>
+
+        <view class="field">
+          <text class="label">产品名称 (EN) *</text>
+          <input
+            v-model="form.name_en"
+            class="field-input"
+            placeholder="e.g. Floral Summer Dress"
+            placeholder-class="placeholder"
+          />
+        </view>
+        <view class="field">
+          <text class="label">产品名称 (CN)</text>
+          <input
+            v-model="form.name_cn"
+            class="field-input"
+            placeholder="e.g. 碎花夏裙"
+            placeholder-class="placeholder"
+          />
+        </view>
+        <view class="field">
+          <text class="label">URL Slug</text>
+          <input
+            v-model="form.slug"
+            class="field-input"
+            placeholder="自动生成（留空）"
+            placeholder-class="placeholder"
+          />
+        </view>
+        <view class="field">
+          <text class="label">描述 (EN)</text>
+          <textarea
+            v-model="form.description"
+            class="field-textarea"
+            placeholder="Product description"
+            placeholder-class="placeholder"
+            :maxlength="2000"
+          />
+        </view>
+        <view class="field">
+          <text class="label">描述 (CN)</text>
+          <textarea
+            v-model="form.description_cn"
+            class="field-textarea"
+            placeholder="产品中文描述"
+            placeholder-class="placeholder"
+            :maxlength="2000"
+          />
+        </view>
       </view>
 
       <!-- 价格与分类 -->
-      <view class="section-title">价格与分类</view>
-      <view class="field-row">
-        <view class="field half">
-          <text class="label">分类 *</text>
-          <picker :range="categoryOptions" range-key="label" @change="onCategoryChange">
-            <view class="picker">{{ selectedCategory || '选择分类' }}</view>
-          </picker>
+      <view class="card">
+        <view class="section-title">
+          <view class="title-bar"></view>
+          <text>价格与分类</text>
         </view>
-        <view class="field half">
-          <text class="label">价格 (US$) *</text>
-          <input v-model="form.price" type="digit" placeholder="0.00" />
+
+        <view class="field-row">
+          <view class="field half">
+            <text class="label">分类 *</text>
+            <picker :range="categoryOptions" range-key="label" @change="onCategoryChange">
+              <view class="field-picker">
+                <text :class="selectedCategory ? 'picker-text' : 'picker-placeholder'">
+                  {{ selectedCategory || '选择分类' }}
+                </text>
+                <text class="picker-arrow">▼</text>
+              </view>
+            </picker>
+          </view>
+          <view class="field half">
+            <text class="label">价格 (US$) *</text>
+            <input
+              v-model="form.price"
+              class="field-input"
+              type="digit"
+              placeholder="0.00"
+              placeholder-class="placeholder"
+            />
+          </view>
         </view>
-      </view>
-      <view class="field">
-        <text class="label">MOQ</text>
-        <input v-model="form.moq" type="number" placeholder="100" />
+        <view class="field">
+          <text class="label">MOQ</text>
+          <input
+            v-model="form.moq"
+            class="field-input"
+            type="number"
+            placeholder="100"
+            placeholder-class="placeholder"
+          />
+        </view>
       </view>
 
       <!-- 尺码 -->
-      <view class="section-title">可选尺码</view>
-      <view class="tags-wrap">
-        <view
-          v-for="s in sizeOptions"
-          :key="s"
-          class="tag"
-          :class="{ active: form.sizes.includes(s) }"
-          @tap="toggleSize(s)"
-        >{{ s }}</view>
+      <view class="card">
+        <view class="section-title">
+          <view class="title-bar"></view>
+          <text>可选尺码</text>
+        </view>
+        <view class="tags-wrap">
+          <view
+            v-for="s in sizeOptions"
+            :key="s"
+            class="size-tag"
+            :class="{ active: form.sizes.includes(s) }"
+            @tap="toggleSize(s)"
+          >{{ s }}</view>
+        </view>
       </view>
 
       <!-- 图片 -->
-      <view class="section-title">产品图片</view>
-      <view class="images-grid">
-        <view v-for="(img, i) in form.images" :key="i" class="img-item">
-          <image :src="img" mode="aspectFill" class="img-thumb" />
-          <view class="img-delete" @tap="removeImage(i)">×</view>
+      <view class="card">
+        <view class="section-title">
+          <view class="title-bar"></view>
+          <text>产品图片</text>
         </view>
-        <view v-if="form.images.length < 10" class="img-add" @tap="chooseImage">
-          <text class="add-icon">+</text>
+        <view class="images-grid">
+          <view v-for="(img, i) in form.images" :key="i" class="img-item">
+            <image :src="img" mode="aspectFill" class="img-thumb" />
+            <view class="img-delete" @tap="removeImage(i)">
+              <text class="img-delete-icon">×</text>
+            </view>
+          </view>
+          <view v-if="form.images.length < 10" class="img-add" @tap="chooseImage">
+            <text class="add-icon">+</text>
+          </view>
         </view>
       </view>
 
       <!-- 标签 -->
-      <view class="section-title">标签</view>
-      <view class="field">
-        <input v-model="tagInput" placeholder="输入标签后回车" @confirm="addTag" />
-      </view>
-      <view class="tags-wrap">
-        <view v-for="(t, i) in form.tags" :key="i" class="tag active" @tap="removeTag(i)">
-          {{ t }} ×
+      <view class="card">
+        <view class="section-title">
+          <view class="title-bar"></view>
+          <text>标签</text>
+        </view>
+        <view class="field">
+          <input
+            v-model="tagInput"
+            class="field-input"
+            placeholder="输入标签后回车"
+            placeholder-class="placeholder"
+            @confirm="addTag"
+          />
+        </view>
+        <view class="tags-wrap">
+          <view v-for="(t, i) in form.tags" :key="i" class="removable-tag" @tap="removeTag(i)">
+            <text class="removable-tag-text">{{ t }}</text>
+            <text class="removable-tag-close">×</text>
+          </view>
         </view>
       </view>
 
       <!-- 货代链接 -->
-      <view class="section-title">货代链接 <text class="hint">（仅后台存储）</text></view>
-      <view class="field">
-        <input v-model="linkInput" placeholder="输入链接后回车" @confirm="addLink" />
-      </view>
-      <view class="tags-wrap">
-        <view v-for="(l, i) in form.freight_links" :key="i" class="tag active" @tap="removeLink(i)">
-          {{ l.slice(0, 20) }}... ×
+      <view class="card">
+        <view class="section-title">
+          <view class="title-bar"></view>
+          <text>货代链接 <text class="hint">（仅后台存储）</text></text>
+        </view>
+        <view class="field">
+          <input
+            v-model="linkInput"
+            class="field-input"
+            placeholder="输入链接后回车"
+            placeholder-class="placeholder"
+            @confirm="addLink"
+          />
+        </view>
+        <view class="tags-wrap">
+          <view v-for="(l, i) in form.freight_links" :key="i" class="removable-tag" @tap="removeLink(i)">
+            <text class="removable-tag-text">{{ l.slice(0, 20) }}...</text>
+            <text class="removable-tag-close">×</text>
+          </view>
         </view>
       </view>
 
       <!-- 推荐 -->
-      <view class="field-row" style="align-items:center;">
-        <text class="label" style="margin-bottom:0;">推荐产品</text>
-        <switch :checked="form.featured" @change="form.featured = $event.detail.value" color="#b8860b" />
+      <view class="card">
+        <view class="switch-row">
+          <view class="switch-left">
+            <view class="title-bar" style="display: inline-block; vertical-align: middle; margin-right: 12rpx;"></view>
+            <text class="switch-label">推荐产品</text>
+          </view>
+          <switch
+            :checked="form.featured"
+            @change="form.featured = $event.detail.value"
+            color="#1677ff"
+          />
+        </view>
       </view>
     </view>
 
     <!-- 提交按钮 -->
     <view class="submit-bar">
-      <button class="submit-btn" :loading="submitting" @tap="onSubmit">
+      <button
+        class="submit-btn"
+        :loading="submitting"
+        @tap="onSubmit"
+      >
         {{ isEdit ? '更新产品' : '创建产品' }}
       </button>
     </view>
@@ -303,27 +408,291 @@ onLoad(async (options) => {
 </script>
 
 <style scoped>
-.page { min-height: 100vh; background: #f5f5f5; padding-bottom: 140rpx; }
-.form { padding: 24rpx; }
-.section-title { font-size: 28rpx; font-weight: 600; color: #1a1a1a; margin: 30rpx 0 16rpx; }
-.hint { font-size: 22rpx; color: #999; font-weight: 400; }
-.field { margin-bottom: 20rpx; }
-.label { display: block; font-size: 24rpx; color: #666; margin-bottom: 8rpx; }
-.field input, .field textarea { width: 100%; height: 80rpx; background: #fff; border: 1rpx solid #e8e8e8; border-radius: 8rpx; padding: 0 20rpx; font-size: 28rpx; box-sizing: border-box; }
-.field textarea { height: 160rpx; padding: 16rpx 20rpx; }
-.field-row { display: flex; gap: 20rpx; }
-.field.half { flex: 1; }
-.picker { height: 80rpx; line-height: 80rpx; background: #fff; border: 1rpx solid #e8e8e8; border-radius: 8rpx; padding: 0 20rpx; font-size: 28rpx; color: #333; }
-.tags-wrap { display: flex; flex-wrap: wrap; gap: 12rpx; }
-.tag { padding: 10rpx 24rpx; background: #f0f0f0; border-radius: 6rpx; font-size: 24rpx; color: #666; }
-.tag.active { background: #1a1a1a; color: #fff; }
-.images-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
-.img-item { position: relative; width: 160rpx; height: 160rpx; }
-.img-thumb { width: 160rpx; height: 160rpx; border-radius: 8rpx; background: #f0f0f0; }
-.img-delete { position: absolute; top: -10rpx; right: -10rpx; width: 40rpx; height: 40rpx; background: #e74c3c; color: #fff; border-radius: 50%; font-size: 24rpx; display: flex; align-items: center; justify-content: center; }
-.img-add { width: 160rpx; height: 160rpx; border: 2rpx dashed #ccc; border-radius: 8rpx; display: flex; align-items: center; justify-content: center; }
-.add-icon { font-size: 48rpx; color: #ccc; }
-.submit-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 20rpx 24rpx; background: #fff; box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.05); }
-.submit-btn { width: 100%; height: 88rpx; line-height: 88rpx; background: #1a1a1a; color: #fff; font-size: 30rpx; border: none; border-radius: 8rpx; }
-.submit-btn::after { border: none; }
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 160rpx;
+}
+
+.form {
+  padding: 20rpx 24rpx;
+}
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* 区块标题 */
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.88);
+  margin-bottom: 24rpx;
+}
+
+.title-bar {
+  width: 6rpx;
+  height: 28rpx;
+  background: #1677ff;
+  border-radius: 3rpx;
+  margin-right: 14rpx;
+  flex-shrink: 0;
+}
+
+.hint {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.45);
+  font-weight: 400;
+}
+
+/* 表单字段 */
+.field {
+  margin-bottom: 24rpx;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  display: block;
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+
+.field-input {
+  width: 100%;
+  height: 80rpx;
+  background: #fff;
+  border: 1rpx solid #d9d9d9;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.88);
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.field-input:focus {
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2rpx rgba(22, 119, 255, 0.1);
+}
+
+.field-textarea {
+  width: 100%;
+  min-height: 200rpx;
+  background: #fff;
+  border: 1rpx solid #d9d9d9;
+  border-radius: 8rpx;
+  padding: 16rpx 20rpx;
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.88);
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.field-textarea:focus {
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2rpx rgba(22, 119, 255, 0.1);
+}
+
+.placeholder {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 28rpx;
+}
+
+.field-row {
+  display: flex;
+  gap: 20rpx;
+}
+
+.field.half {
+  flex: 1;
+}
+
+/* Picker */
+.field-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80rpx;
+  background: #fff;
+  border: 1rpx solid #d9d9d9;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+}
+
+.picker-text {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.picker-placeholder {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.picker-arrow {
+  font-size: 20rpx;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* 尺码标签 */
+.tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.size-tag {
+  padding: 14rpx 32rpx;
+  background: #f5f5f5;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: rgba(0, 0, 0, 0.65);
+  border: 1rpx solid #f0f0f0;
+  transition: all 0.2s;
+}
+
+.size-tag.active {
+  background: rgba(22, 119, 255, 0.08);
+  color: #1677ff;
+  border-color: #1677ff;
+  font-weight: 500;
+}
+
+/* 图片网格 */
+.images-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.img-item {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+}
+
+.img-thumb {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 12rpx;
+  background: #f0f0f0;
+}
+
+.img-delete {
+  position: absolute;
+  top: -12rpx;
+  right: -12rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: #ff4d4f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3rpx solid #fff;
+}
+
+.img-delete-icon {
+  color: #fff;
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+.img-add {
+  width: 200rpx;
+  height: 200rpx;
+  border: 2rpx dashed #d9d9d9;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-icon {
+  font-size: 56rpx;
+  color: rgba(0, 0, 0, 0.25);
+  line-height: 1;
+}
+
+/* 可移除标签 */
+.removable-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 10rpx 20rpx;
+  background: rgba(22, 119, 255, 0.08);
+  border-radius: 999rpx;
+  margin-bottom: 8rpx;
+}
+
+.removable-tag-text {
+  font-size: 24rpx;
+  color: #1677ff;
+}
+
+.removable-tag-close {
+  font-size: 24rpx;
+  color: #1677ff;
+  margin-left: 10rpx;
+  font-weight: 600;
+}
+
+/* 推荐开关 */
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.switch-left {
+  display: flex;
+  align-items: center;
+}
+
+.switch-label {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.88);
+  font-weight: 500;
+}
+
+/* 提交按钮 */
+.submit-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.05);
+}
+
+.submit-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: #1677ff;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 500;
+  border: none;
+  border-radius: 8rpx;
+  letter-spacing: 2rpx;
+}
+
+.submit-btn::after {
+  border: none;
+}
 </style>
