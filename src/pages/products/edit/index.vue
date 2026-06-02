@@ -106,7 +106,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onLoad } from '@dcloudio/uni-app'
+import { ref, reactive } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { fetchProductById, createProduct, updateProduct } from '@/api/products'
 import { uploadImage } from '@/api/upload'
 
