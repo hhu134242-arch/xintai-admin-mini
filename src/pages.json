@@ -1,0 +1,78 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "管理后台"
+      }
+    },
+    {
+      "path": "pages/login/index",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/products/list/index",
+      "style": {
+        "navigationBarTitleText": "产品管理"
+      }
+    },
+    {
+      "path": "pages/products/edit/index",
+      "style": {
+        "navigationBarTitleText": "编辑产品"
+      }
+    },
+    {
+      "path": "pages/products/detail/index",
+      "style": {
+        "navigationBarTitleText": "产品详情"
+      }
+    },
+    {
+      "path": "pages/inquiries/list/index",
+      "style": {
+        "navigationBarTitleText": "询盘管理"
+      }
+    },
+    {
+      "path": "pages/inquiries/detail/index",
+      "style": {
+        "navigationBarTitleText": "询盘详情"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "XinTai Admin",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1a1a1a",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tab/home.png",
+        "selectedIconPath": "static/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/products/list/index",
+        "text": "产品",
+        "iconPath": "static/tab/product.png",
+        "selectedIconPath": "static/tab/product-active.png"
+      },
+      {
+        "pagePath": "pages/inquiries/list/index",
+        "text": "询盘",
+        "iconPath": "static/tab/inquiry.png",
+        "selectedIconPath": "static/tab/inquiry-active.png"
+      }
+    ]
+  }
+}
