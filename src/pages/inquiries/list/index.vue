@@ -88,7 +88,7 @@ const refreshing = ref(false)
 const noMore = ref(false)
 
 const pendingCount = computed(() =>
-  inquiries.value.filter((i) => i.status === 'new').length,
+  (inquiries.value || []).filter((i) => i.status === 'new').length,
 )
 
 function statusLabel(s: string) {

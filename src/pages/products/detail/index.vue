@@ -21,7 +21,7 @@
           <text class="info-label">分类</text>
           <text class="info-value">{{ product.category }} / {{ product.category_cn }}</text>
         </view>
-        <text class="product-name">{{ product.name }}</text>
+        <text class="product-name">{{ product.name_en }}</text>
         <text class="product-name-cn">{{ product.name_cn }}</text>
         <view class="price-row">
           <text class="price">US${{ product.price?.toFixed(2) }}</text>

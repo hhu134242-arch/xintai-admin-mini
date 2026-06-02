@@ -5,7 +5,7 @@
       <view class="section-title">基本信息</view>
       <view class="field">
         <text class="label">产品名称 (EN) *</text>
-        <input v-model="form.name" placeholder="e.g. Floral Summer Dress" />
+        <input v-model="form.name_en" placeholder="e.g. Floral Summer Dress" />
       </view>
       <view class="field">
         <text class="label">产品名称 (CN)</text>
@@ -131,7 +131,7 @@ const categoryOptions = [
 const sizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL']
 
 const form = reactive({
-  name: '',
+  name_en: '',
   name_cn: '',
   slug: '',
   description: '',
@@ -217,7 +217,7 @@ function removeImage(i: number) {
 }
 
 async function onSubmit() {
-  if (!form.name) {
+  if (!form.name_en) {
     uni.showToast({ title: '请输入产品名称', icon: 'error' })
     return
   }
@@ -233,9 +233,9 @@ async function onSubmit() {
   submitting.value = true
   try {
     const payload = {
-      name: form.name,
+      name_en: form.name_en,
       name_cn: form.name_cn,
-      slug: form.slug || form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+      slug: form.slug || form.name_en.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
       description: form.description,
       description_cn: form.description_cn,
       category: form.category,
@@ -275,7 +275,7 @@ onLoad(async (options) => {
       const p = await fetchProductById(options.id)
       if (p) {
         Object.assign(form, {
-          name: p.name,
+          name_en: p.name_en,
           name_cn: p.name_cn,
           slug: p.slug,
           description: p.description,

@@ -45,7 +45,7 @@
           mode="aspectFill"
         />
         <view class="product-info">
-          <text class="product-name">{{ product.name }}</text>
+          <text class="product-name">{{ product.name_en }}</text>
           <text class="product-name-cn">{{ product.name_cn }}</text>
           <view class="product-meta">
             <text class="price">US${{ product.price?.toFixed(2) }}</text>
@@ -159,7 +159,7 @@ async function onDelete(p: Product) {
   const res = await new Promise<boolean>((resolve) => {
     uni.showModal({
       title: '确认删除',
-      content: `确定删除「${p.name}」？`,
+      content: `确定删除「${p.name_en}」？`,
       success: (r) => resolve(r.confirm),
     })
   })
